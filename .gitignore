@@ -1,0 +1,15 @@
+# Node.js
+node_modules/
+
+# Output folder
+outputs/
+
+# Logs
+logs/
+*.log
+
+# Environment variables
+.env
+
+# Dependency directory
+.lib/
