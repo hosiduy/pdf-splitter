@@ -15,17 +15,18 @@ npm install
 To execute the script, use the following command in your terminal:
 
 ```bash
-node index.js <inputFilePath> <indexKey> <maxPage>
+node index.js <inputFilePath> <indexKey> <maxPage> <postfix>
 ```
 
 - `<inputFilePath>`: Path to the input PDF file.
 - `<indexKey>`: Keyword used to identify the data to extract (e.g., "Mã HS:").
 - `<maxPage>`: Maximum number of pages to process (set to 0 to render all pages).
+- `<postfix>`: Add extra value to the end of the file. 
 
 ### Example:
 
 ```bash
-node index.js path/to/input.pdf "Mã HS:" 4
+node index.js path/to/input.pdf "Mã HS:" 4 "_KQ_1"
 ```
 
 ## Output

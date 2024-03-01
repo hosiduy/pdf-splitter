@@ -2,7 +2,7 @@ const { PDFDocument } = require('pdf-lib');
 const pdf = require('pdf-parse');
 const fs = require('fs/promises');
 
-async function getFileNamesFromFile(inputPath, indexKey, maxPage) {
+async function getFileNamesFromFile (inputPath, indexKey, maxPage, postfix) {
     let dataBuffer = await fs.readFile(inputPath);
     const data = await pdf(dataBuffer, {
         max: maxPage
@@ -22,12 +22,12 @@ async function getFileNamesFromFile(inputPath, indexKey, maxPage) {
     // PDF text
     // console.log(data.text);
 
-    const hs = extractDataAfterIndexKey(data.text, indexKey);
+    const hs = extractDataAfterIndexKey(data.text, indexKey, postfix);
     console.log("hs: ", hs);
     return hs;
 }
 
-function extractDataAfterIndexKey (text, indexKey) {
+function extractDataAfterIndexKey (text, indexKey, postfix) {
     const lines = text.split('\n');
     const dataArray = [];
     const regex = new RegExp(`${indexKey}(.*)`);
@@ -35,7 +35,10 @@ function extractDataAfterIndexKey (text, indexKey) {
     for (const line of lines) {
         const match = line.match(regex);
         if (match && match[1]) {
-            const data = match[1].trim();
+            let data = match[1].trim();
+            if (postfix) {
+                data += postfix;
+            }
             dataArray.push(data);
         }
     }
@@ -70,8 +73,8 @@ async function splitPDF (inputPath, outputPath, fileNames) {
     }
 }
 
-async function exportFiles (inputFilePath, outputFolderPath, indexKey, maxPage) {
-    const fileNames = await getFileNamesFromFile(inputFilePath, indexKey, parseInt(maxPage));
+async function exportFiles (inputFilePath, outputFolderPath, indexKey, maxPage, postfix) {
+    const fileNames = await getFileNamesFromFile(inputFilePath, indexKey, parseInt(maxPage), postfix);
 
     splitPDF(inputFilePath, outputFolderPath, fileNames)
         .then(() => console.log('PDF split successfully'))
@@ -83,6 +86,7 @@ const outputFolderPath = './outputs';
 const inputFilePath = process.argv[2];
 const indexKey = process.argv[3]; // Example: Mã HS:
 const maxPage = process.argv[4]; // Example: 4, pass 0 to render all
+const postfix = process.argv[5]; // Example: _KQ_1
 
 // Check if required arguments are provided
 if (!inputFilePath || !outputFolderPath || !indexKey || !maxPage) {
@@ -90,4 +94,4 @@ if (!inputFilePath || !outputFolderPath || !indexKey || !maxPage) {
     process.exit(1); // Exit with an error code
 }
 
-exportFiles(inputFilePath, outputFolderPath, indexKey, maxPage);
+exportFiles(inputFilePath, outputFolderPath, indexKey, maxPage, postfix);
